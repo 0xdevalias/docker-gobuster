@@ -1,0 +1,11 @@
+FROM alpine AS build-env
+WORKDIR /
+RUN apk add --no-cache curl ca-certificates
+RUN curl -L https://github.com/danielmiessler/SecLists/archive/master.zip > seclists.zip
+RUN unzip seclists.zip
+RUN mkdir -p /tmp/emptyFolder
+
+FROM devalias/gobuster
+COPY --from=build-env /tmp/emptyFolder /words
+COPY --from=build-env /SecLists-master/Discovery/Web_Content /words/web
+COPY --from=build-env /SecLists-master/Discovery/DNS /words/dns
